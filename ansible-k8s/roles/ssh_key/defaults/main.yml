@@ -1,0 +1,3 @@
+---
+# vars file for ssh_key
+delete_ssh_dir: 0

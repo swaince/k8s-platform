@@ -1,0 +1,56 @@
+---
+# tasks file for update_kernel
+- name: import gpg key
+  rpm_key: 
+    key: https://www.elrepo.org/RPM-GPG-KEY-elrepo.org
+    state: present
+
+- name: yum install EPEL
+  yum:
+    name: https://www.elrepo.org/elrepo-release-7.el7.elrepo.noarch.rpm 
+    state: present
+
+- name: list kernel available
+  yum: 
+    disablerepo: "*"
+    enablerepo: "elrepo-kernel"
+    list: "available"
+  register: kernel_list
+
+- name: print kernel-list
+  debug:
+     msg: "pkg: {{item.name}}.{{item.arch}} version: {{item.version}}-{{item.release}} repo: {{item.repo}}"
+  with_items: "{{ kernel_list.results }}"
+
+
+# - name: remove kernel
+#   yum:
+#    enablerepo: "elrepo-kernel"
+#    name: "kernel-ml"
+#    state: absent
+
+- name: install kernel
+  yum:
+    enablerepo: "elrepo-kernel"
+    name: "kernel-lt"
+    state: present
+
+- name: collect kernel version
+  shell: |
+    awk -F\' '$1=="menuentry " {print i++ " : " $2}' /etc/grub2.cfg
+  register: kernel_versions
+
+- name: print kernel versions
+  debug:
+    msg: "{{ item }}"
+  with_items: "{{ kernel_versions.stdout_lines}}"
+
+- name: print kernel index
+  debug:
+    msg: "choose kernel index: {{ kernel_index }}"
+- name: config kernel
+  shell: |
+    grub2-set-default {{ kernel_index }}
+    sed -i "s/GRUB_DEFAULT=.*/GRUB_DEFAULT={{ kernel_index }}/g" /etc/default/grub    
+    grub2-mkconfig -o /boot/grub2/grub.cfg
+

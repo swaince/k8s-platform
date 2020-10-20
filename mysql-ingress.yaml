@@ -1,0 +1,12 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: mysql
+spec:
+ rules:
+   - host: db.cnecloud.com
+     http:
+       paths:
+         - backend:
+             serviceName: mysql
+             servicePort: 3360

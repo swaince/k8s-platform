@@ -1,0 +1,10 @@
+---
+- import_playbook: playbooks/ssh.yml
+- import_playbook: playbooks/docker.yml
+- import_playbook: playbooks/harbor.yml
+- import_playbook: playbooks/nfs.yml
+- import_playbook: playbooks/nginx.yml
+- import_playbook: playbooks/k8s-hosts.yml
+- import_playbook: playbooks/k8s-install.yml
+- import_playbook: playbooks/k8s-master.yml
+- import_playbook: playbooks/k8s-worker.yml

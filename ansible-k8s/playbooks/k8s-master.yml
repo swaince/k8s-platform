@@ -1,0 +1,8 @@
+---
+- hosts: k8s_master_servers
+  name: init k8s master
+  gather_facts: no
+
+  roles:
+    - { role: k8s_init_master }
+    - { role: k8s_join_master }

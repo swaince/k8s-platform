@@ -1,0 +1,3 @@
+---
+# kernel列表中选择版本索引，默认为0
+kernel_index: 0

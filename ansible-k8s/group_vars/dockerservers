@@ -1,0 +1,14 @@
+---
+# vars file for docker
+# docker 镜像一列表
+mirrors: 
+  - "http://registry.cnegroup.com"
+  - "https://docker.mirrors.ustc.edu.cn"
+  - "http://f1361db2.m.daocloud.io"
+  - "https://registry.docker-cn.com"
+# 信任仓库列表
+repositories: 
+  - "registry.cnegroup.com"
+
+# 开启tcp端口
+enable_tcp: 0

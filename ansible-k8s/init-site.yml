@@ -1,0 +1,3 @@
+---
+- import_playbook: playbooks/kernel.yml
+- import_playbook: playbooks/init-server.yml

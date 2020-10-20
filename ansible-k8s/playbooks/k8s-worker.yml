@@ -1,0 +1,7 @@
+---
+- hosts: k8s_worker_servers
+  name: join k8s worker
+  gather_facts: no
+
+  roles:
+    - {role: k8s_join_worker}

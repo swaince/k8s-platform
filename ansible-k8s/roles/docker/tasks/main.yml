@@ -1,0 +1,76 @@
+---
+# tasks file for docker
+- name: remove old version
+  yum:
+    state: absent
+    name:
+      - docker
+      - docker-client
+      - docker-client-latest
+      - docker-common 
+      - docker-latest 
+      - docker-latest-logrotate
+      - docker-logrotate 
+      - docker-engine
+
+- name: install software
+  yum:
+    name: [yum-utils, vim, net-tools, gcc]
+    state: present
+
+- name: add aliyun docker repo
+  shell: |
+    yum-config-manager --add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+    yum clean all
+    # yum makecache fast
+
+- name: install docker
+  yum:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - device-mapper-persistent-data
+      - lvm2
+
+- name: start docker
+  service:
+    name: docker
+    state: started
+    enabled: yes
+
+- name: stop firewall
+  service:
+    name: firewalld
+    state: stopped
+    enabled: no
+
+- name: copy conf
+  template:
+    src: daemon.json.j2
+    dest: /etc/docker/daemon.json
+  notify: 
+    - restart-docker
+
+- name: enable tcp port
+  lineinfile:
+    path: /usr/lib/systemd/system/docker.service
+    regexp: '-H fd:\/\/'
+    line: 'ExecStart=/usr/bin/dockerd -H fd://  -H tcp://0.0.0.0:2375 --containerd=/run/containerd/containerd.sock'
+  when: enable_tcp == 1
+  notify: 
+    - restart-docker
+
+- name: get docker-compose version
+  shell: |
+    echo https://get.daocloud.io/docker/compose/releases/download/1.25.5/docker-compose-`uname -s`-`uname -m`
+  register: docker_compose_url
+
+- name: download docker-compose
+  get_url:
+    url: "{{ docker_compose_url.stdout }}"
+    dest: /usr/local/bin/docker-compose
+
+- name: chown docker-compose
+  shell: |
+    chmod +x /usr/local/bin/docker-compose

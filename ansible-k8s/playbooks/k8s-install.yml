@@ -1,0 +1,9 @@
+---
+- hosts: 
+  - k8s_master_servers
+  - k8s_worker_servers
+  name: install k8s components
+  gather_facts: no
+
+  roles:
+    - { role: k8s_install_component }

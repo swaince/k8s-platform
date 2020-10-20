@@ -1,0 +1,9 @@
+---
+# 添加域名映射
+- import_playbook: k8s-hosts.yml
+# yum 安装k8s组件
+- import_playbook: k8s-install.yml
+# 初始化master
+- import_playbook: k8s-master.yml
+# 初始化worker
+- import_playbook: k8s-worker.yml

@@ -1,0 +1,10 @@
+---
+# 登录ssh主机列表的用户名和密码
+ansible_ssh_name: root
+ansible_ssh_pass: 123456
+
+# 是否删除旧的ssh目录
+delete_old_ssh_dir: 0
+
+ansible_master: 192.168.2.49
+ansible_master_ssh_pass: 123456

@@ -1,0 +1,6 @@
+- hosts: nfsservers
+  name: install nfs
+  gather_facts: no
+
+  roles:
+    - nfs

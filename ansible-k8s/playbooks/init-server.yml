@@ -1,0 +1,23 @@
+- hosts: k8sservers
+  name: config k8s
+
+  tasks:
+    - name: get selinux status
+      shell: |
+        sestatus | awk '{ print $3 }'
+      register: selinx_status
+
+    - name: close selinux
+      shell: |
+        setenforce 0
+      when: selinx_status.stdout == "enabled"
+
+    - name: close selinux config
+      lineinfile:
+        path: /etc/selinux/config
+        regexp: "SELINUX=.*"
+        line: SELINUX=disabled
+      when: selinx_status.stdout == "enabled"
+
+    - name: reboot server
+      shell: reboot

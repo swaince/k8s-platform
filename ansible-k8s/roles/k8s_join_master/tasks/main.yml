@@ -1,0 +1,23 @@
+- name: start kubelet service
+  service:
+    name: kubelet
+    state: started
+    enabled: yes
+  when: master_type == "join"
+
+- name: copy master join token
+  copy:
+    src: /tmp/master_join_token
+    dest: "~/"
+  when: master_type == "join"
+
+- name: join master
+  shell: |
+    bash < ~/master_join_token | tee kubeadm-master-join.log
+  when: master_type == "join"
+
+- name: copy and chown k8s conf
+  shell: |
+     /bin/cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+     chown $(id -u):$(id -g) $HOME/.kube/config
+  when: master_type == "join"

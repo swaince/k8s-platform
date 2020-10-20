@@ -1,0 +1,10 @@
+---
+- hosts: k8sservers
+  name: add host mapping
+  gather_facts: no
+
+  tasks:
+    - name: append host mapping
+      shell: |
+        echo {{ item }} >> /etc/hosts
+      with_items: "{{ host_mappings }}"

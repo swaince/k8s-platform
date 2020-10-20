@@ -1,0 +1,97 @@
+- name: init master
+  shell: |
+    kubeadm init --kubernetes-version={{ kubernetes_version }}  \
+    --apiserver-advertise-address=0.0.0.0   \
+    --control-plane-endpoint={{ control_plane_endpoint }}   \
+    --image-repository {{ image_repository }}  \
+    --upload-certs \
+    --service-cidr={{ service_cidr }} --pod-network-cidr={{ pod_network_cidr }} | tee kubeadm-init.log
+  when: master_type == "init"
+
+- name: create kube dir
+  file:
+    name: $HOME/.kube
+    state: directory
+
+- name: copy and chown k8s conf
+  shell: |
+     /bin/cp -f /etc/kubernetes/admin.conf $HOME/.kube/config
+     chown $(id -u):$(id -g) $HOME/.kube/config
+  when: master_type == "init"
+
+- name: copy calico manifests
+  copy:
+    src: calico.yaml
+    dest: calico.yaml
+  when: master_type == "init"
+
+- name: deploy calico
+  shell: |
+    kubectl apply -f calico.yaml
+  when: master_type == "init"
+
+- name: copy kuboard manifests
+  copy:
+    src: kuboard.yaml
+    dest: kuboard.yaml
+  when: master_type == "init"
+
+# https://kuboard.cn/install-script/kuboard.yaml
+- name: deploy kuboard
+  shell: |
+    kubectl apply -f kuboard.yaml
+  when: master_type == "init"
+
+- name: download metrics-server manifests
+  copy:
+    src: metrics-server.yaml
+    dest: metrics-server.yaml
+  when: master_type == "init"
+
+# https://addons.kuboard.cn/metrics-server/0.3.7/metrics-server.yaml
+- name: deploy metrics-server
+  shell: |
+    kubectl apply -f metrics-server.yaml
+  when: master_type == "init"
+
+- name: get master join token
+  shell: |
+     kubeadm init phase upload-certs --upload-certs > certs
+  when: master_type == "init"
+
+- name: get master join token
+  shell: |
+    kubeadm token create --print-join-command
+  register: join_token
+  when: master_type == "init"
+
+- name: get master crets
+  shell: |
+    echo "{{ join_token.stdout }}"  > worker_join_token
+    cert_key=`cat certs | tail -n 1`
+    echo "{{ join_token.stdout }} --control-plane --certificate-key ${cert_key}"
+    echo "{{ join_token.stdout }} --control-plane --certificate-key ${cert_key}"  > master_join_token
+  register: master_join_token
+  when: master_type == "init"
+
+- name: print master join token
+  debug:
+    var: master_join_token
+  when: master_type == "init"
+
+- name: fetch master join token file
+  fetch:
+    src: master_join_token
+    dest: /tmp/
+    flat: yes
+    validate_checksum: no
+  when: master_type == "init"
+
+- name: fetch worker join token file
+  fetch:
+    src: worker_join_token
+    dest: /tmp/
+    flat: yes
+    validate_checksum: no
+  when: master_type == "init"
+

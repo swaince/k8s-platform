@@ -1,0 +1,15 @@
+upstream kuboard {
+    {% for host in k8s_master_servers %}
+        server {{ host }}:32567;
+    {% endfor %}
+}
+
+server {
+    listen       80;
+    listen  [::]:80;
+    server_name  localhost;
+
+    location / {
+        proxy_pass   http://kuboard;
+    }
+}

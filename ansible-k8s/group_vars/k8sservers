@@ -1,0 +1,8 @@
+---
+# 主机域名映射
+host_mappings: 
+  - "192.168.2.46 ansible-01"
+  - "192.168.2.47 ansible-02"
+  - "192.168.2.48 ansible-03"
+  - "192.168.2.49 cne-k8s.com"
+  - "192.168.2.49 ansible-master"

@@ -1,0 +1,61 @@
+# 需要配置ssh免密的主机列表
+[sshservers]
+192.168.2.46
+192.168.2.47
+192.168.2.48
+localhost
+#  升级内核主机列表
+[kernelservers]
+192.168.2.46
+192.168.2.47
+192.168.2.48
+
+
+[kernelservers:children]
+sshservers
+
+# 需要部署docker的主机列表
+[dockerservers]
+192.168.2.46
+192.168.2.47
+192.168.2.48
+
+# harbor
+[harborservers]
+
+
+# nfs 主机列表, 列表中必需有一台server添加nfs_server=1变量，
+# 例如 192.168.2.10 nfs_server=1
+# 或在host_vars目录下添加变量文件，该文件与主机名相同
+# 文件：host_vars/192.168.2.10内容
+# ---
+# nfs_server: 1 
+#
+[nfsservers]
+192.168.2.46
+192.168.2.47
+192.168.2.48
+
+# 安装nginx主机
+[nginxservers]
+# 192.168.2.49
+localhost
+
+# k8s集群节点列表
+[k8sservers]
+
+# k8s master集群节点列表
+[k8s_master_servers]
+192.168.2.46
+192.168.2.47
+192.168.2.48
+
+# k8s worker节点列表
+[k8s_worker_servers]
+
+
+[k8sservers:children]
+k8s_master_servers
+k8s_worker_servers
+nginxservers
+dockerservers

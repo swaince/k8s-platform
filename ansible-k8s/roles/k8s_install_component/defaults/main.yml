@@ -1,0 +1,8 @@
+---
+kubernetes_version: 1.19.0
+# k8s若高可用需要配置 nginx域名地址
+control_plane_endpoint: localhost
+image_repository: registry.aliyuncs.com/google_containers
+service_cidr: "10.10.0.0/16"
+pod_network_cidr: "10.122.0.0/16"
+master_type: "join"

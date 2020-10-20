@@ -1,0 +1,14 @@
+- name: start kubelet service
+  service:
+    name: kubelet
+    state: started
+    enabled: yes
+    
+- name: copy worker join token
+  copy:
+    src: /tmp/worker_join_token
+    dest: "~/"
+
+- name: join master
+  shell: |
+    bash < ~/worker_join_token | tee kubeadm-worker-join.log

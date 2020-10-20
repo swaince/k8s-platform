@@ -1,0 +1,7 @@
+---
+# vars file for docker
+mirrors: []
+repositories: []
+
+# 开启tcp端口
+enable_tcp: 0

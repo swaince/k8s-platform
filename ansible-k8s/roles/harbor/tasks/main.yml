@@ -1,0 +1,37 @@
+- name: download harbor archive
+  get_url:
+    url: "https://github.com/goharbor/harbor/releases/download/v{{ harbor_version }}/harbor-offline-installer-v{{ harbor_version }}.tgz"
+    dest: "~/"
+    checksum: "md5sum:https://github.com/goharbor/harbor/releases/download/v1.10.5/md5sum"
+  when: harbor_version != "1.10.5"
+
+- name: copy harbor archive
+  copy:
+    src: "harbor-offline-installer-v{{ harbor_version }}.tgz"
+    dest: "~/"
+  when: harbor_version == "1.10.5"
+
+- name: create harbor home
+  file:
+    path: "{{ harbor_home }}"
+    state: directory
+
+- name: move archive to harbor home
+  shell: |
+    tar -zxvf harbor-offline-installer-v{{ harbor_version }}.tgz -C {{ harbor_home }}
+
+- name: copy conf file
+  copy:
+    src: harbor.yml
+    dest: "{{ harbor_home }}/harbor/harbor.yml"
+
+- name: prepare harbor
+  shell: "{{ harbor_home }}/harbor/prepare"
+
+- name: install harbor
+  shell: "{{ harbor_home }}/harbor/install.sh"
+
+- name: start harbor
+  shell: |
+    cd "{{ harbor_home }}/harbor"
+    docker-compose up -d

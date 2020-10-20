@@ -1,0 +1,36 @@
+# task list
+- name: install packages
+  yum:
+    name:
+      - nfs-utils
+      - rpcbind
+    state: present
+
+- name: start nfs service
+  service:
+    name: nfs-server
+    state: started
+    enabled: yes
+
+- name: start nfs service
+  service:
+    name: rpcbind
+    state: started
+    enabled: yes
+    
+- name: create nfs dir
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: '0777'
+  when: nfs_server == 1
+  with_items: "{{ nfs_data_dirs }}"
+
+- name: copy nfs server conf
+  copy:
+    src: exports
+    dest: /etc/exports
+  when: nfs_server == 1
+  notify:
+    - restart-nfs
+    - restart-rpcbind

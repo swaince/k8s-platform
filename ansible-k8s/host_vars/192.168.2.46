@@ -1,0 +1,11 @@
+---
+kubernetes_version: 1.19.0
+# k8s若高可用需要配置 nginx域名地址
+control_plane_endpoint: cne-k8s.com
+image_repository: registry.aliyuncs.com/google_containers
+service_cidr: "10.10.0.0/16"
+pod_network_cidr: "10.122.0.0/16"
+master_type: "init"
+nfs_server: 1
+nfs_data_dirs:
+  - /data/nfs

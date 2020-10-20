@@ -1,0 +1,18 @@
+{
+        "registry-mirrors": [
+            {% for mirror in mirrors %}
+                "{{ mirror }}",
+            {% endfor %}
+        ],
+        "insecure-registries": [
+      	    {% for repo in repositories %}
+                "{{ repo }}",
+            {% endfor %}
+	    ],
+        "exec-opts": ["native.cgroupdriver=systemd"],
+        "log-driver": "json-file",
+        "log-opts": {
+                "max-size": "100m"
+        },
+        "storage-driver": "overlay2"
+}
